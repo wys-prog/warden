@@ -8,10 +8,10 @@ namespace wylma {
 
   namespace warden {
 
-    typedef struct node {
+    typedef struct {
       std::string id;
       instruction ins;
-    };
+    } node;
     
   }
 

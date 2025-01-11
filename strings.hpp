@@ -1,7 +1,9 @@
 #pragma once
 
+#include <ctime>
 #include <string>
 #include <vector>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -11,17 +13,21 @@ namespace wylma {
 
     class strings {
     public:
+      static std::string compile(const std::string &str) {
+        return str;
+      }
+
       template <typename T>
       static std::string compile(const T &t) {
         return std::to_string(t);
       }
 
       template <typename T>
-      static std::string compile(const std::vector<T> &vec, const std::string &beg = "") {
+      static std::string compile(const std::vector<T> &vec, const std::string &end = "") {
         std::string mystring;
 
         for (const auto &elem : vec) {
-          mystring += beg + compile(elem);
+          mystring += compile(elem) + end;
         }
 
         return mystring;
@@ -60,6 +66,29 @@ namespace wylma {
         }
 
         return myargs;
+      }
+
+      static void trim(std::string &str) {
+        size_t beg = 0;
+        size_t end = str.size();
+        
+        while (beg < end && isspace(str[beg])) {
+          ++beg;
+        }
+        
+        while (end > beg && isspace(str[end - 1])) {
+          --end;
+        }
+        
+        str = str.substr(beg, end - beg);
+      }
+
+      static std::string get_rand() {
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+        std::ostringstream oss;
+        oss << std::put_time(&tm, "%d%m%Y%H%M%S");
+        return oss.str();
       }
     };
   }

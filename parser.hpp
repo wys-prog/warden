@@ -1,10 +1,12 @@
 #pragma once
 
+
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iostream>
 
+#include "nodes.hpp"
 #include "strings.hpp"
 #include "instructions.hpp"
 
@@ -13,54 +15,74 @@ namespace wylma {
 
     instruction parse_instruction(const std::vector<std::string> &instructions) {
       instruction myins;
-      bool next_is_input = false;
-      bool next_is_output = false;
-      bool next_is_password = false;
 
-      for (const auto ins : instructions) {
-        if (next_is_input) {
-          myins.inputs.push_back(ins);
-          next_is_input = false;
-          continue;
-        } else if (next_is_output) {
-          myins.outputs.push_back(ins);
-          next_is_output = false;
-          continue;
-        } else if (next_is_password) {
-          myins.password = ins;
-          next_is_password = false;
-          continue;
-        }
-
-        if (ins == "-c") {
+      for (size_t i = 0; i < instructions.size(); ++i) {
+        if (instructions[i] == "-c") {
           myins.operation = crypt;
-        } else if (ins == "-i") {
-          next_is_input = true;
-        } else if (ins == "-o") {
-          next_is_output = true;
-        } else if (ins == "-p") {
-          next_is_password = true;
+        } else if (instructions[i] == "-d") {
+          myins.operation = decrypt;
+        } else if (instructions[i] == "-i") {
+          if (i + 1 < instructions.size()) {
+            myins.inputs.push_back(instructions[++i]);
+          } else {
+            throw std::runtime_error("Error: Missing input file after '-i'");
+          }
+        } else if (instructions[i] == "-o") {
+          if (i + 1 < instructions.size()) {
+            myins.outputs.push_back(instructions[++i]);
+          } else {
+            throw std::runtime_error("Error: Missing output file after '-o'");
+          }
         } else {
-          std::cerr << "error: Unknown symbol: " << ins << std::endl;
+          // Check if the argument is unrecognized
+          if (instructions[i].starts_with("-")) {
+            throw std::runtime_error("Error: Unknown option " + instructions[i]);
+          }
+          // Otherwise, treat it as a password
+          myins.password = instructions[i];
         }
       }
 
       return myins;
     }
 
-    std::vector<instruction> parse_file(const std::string &path) {
-      std::vector<instruction> me;
-      std::ifstream file(path);
 
-      if (!file)
-        throw std::runtime_error("No such file: " + path);
+
+    std::vector<node> get_nodes_from_file(const std::string &path) {
+      std::vector<node> nodes;
+      std::ifstream input(path);
+      if (!input) throw std::runtime_error("Warden: No such file: " + path);
 
       std::string line;
-      while (std::getline(file, line, ';')) {
-        me.push_back(parse_instruction(strings::split_arguments(line)));
+
+      while (std::getline(input, line)) { 
+        strings::trim(line);
+        node n;
+
+        if (line.starts_with("$") && line.ends_with(":")) {
+          size_t beg = line.find('$'), end = line.find(':', beg + 1);
+          if (beg == std::string::npos || end == std::string::npos) throw std::runtime_error("Warden: Parse error\nLine: " + line); 
+
+          n.id = line.substr(beg + 1, end - (beg + 1));
+
+          std::getline(input, line);
+
+          while (line.empty()) {
+            std::getline(input, line);
+            strings::trim(line);
+          }
+
+        } else if (line.empty()) continue; else {
+          n.id = strings::get_rand();
+        }
+
+        n.ins = parse_instruction(strings::split_arguments(line));
+
+        nodes.push_back(n);
       }
 
-      return me;
+      return nodes;
     }
+
   } // namespace warden
 } // namespace wylma

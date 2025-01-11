@@ -66,6 +66,8 @@
     "print": "cpp",
     "queue": "cpp",
     "fstream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "sstream": "cpp",
+    "iomanip": "cpp"
   }
 }

@@ -17,11 +17,11 @@ namespace wylma {
       }
 
       template <typename T>
-      static std::string compile(const std::vector<T> &vec) {
+      static std::string compile(const std::vector<T> &vec, const std::string &beg = "") {
         std::string mystring;
 
         for (const auto &elem : vec) {
-          mystring += compile(elem);
+          mystring += beg + compile(elem);
         }
 
         return mystring;

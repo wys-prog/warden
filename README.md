@@ -1,39 +1,40 @@
-# warden
+# **Warden**
 
-## Compilation
-> You just need a C++ compiler, supporting the C++20 standard.
+## **Compilation**
+> You just need a C++ compiler that supports the C++20 standard.
 
-## Usage
-It's really simple.
-You can give a password by puting it without flags (last flag will be counted as password)
-Four flags are supported. 
+## **Usage**
+It's really simple.  
+You can provide a password by entering it without any flags (the last argument will be considered the password).  
+Four flags are supported:
 
-- `-o`: add an output
-- `-i`: add an input
-- `-d`: Decode mode
-- `-c`: Code mode
+- `-o`: Add an output.
+- `-i`: Add an input.
+- `-d`: Decode mode.
+- `-c`: Code mode.
 
-> By default, the mode i `-d`
+> By default, the mode is `-d`.
 
-> However, the CLI version didn't works proprely. I'm working on..
-> The file mode works nicely.
+> However, the CLI version doesn't work properly yet. I'm working on it...  
+> The file mode works well.
 
-## Giving a file as an input for Warden
+## **Providing a File as Input for Warden**
 
 ```bash
 warden -f "file path"
 ```
 
-## Making a warden file
-*By default, the `.wa` extention is the Warden's extention*
+## **Creating a Warden File**
+*By default, `.wa` is the Warden file extension.*
+
 ```bash
 $label:
   "Password" -i input1 -i "input 2" -o output1 -o "output 2" -c
 
 $label2:
-  "Password" -i "output 2" -o "output  3" -d
+  "Password" -i "output 2" -o "output 3" -d
 ```
 
-You don't really have limitation in inputs/outputs
+You don't really have any limitations on inputs or outputs.
 
-Have fun !!
+Have fun!

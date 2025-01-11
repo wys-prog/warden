@@ -72,7 +72,9 @@ namespace wylma {
             strings::trim(line);
           }
 
-        } else if (line.empty()) continue; else {
+        } else if (line.starts_with("//") || line.starts_with("#") || line.starts_with("--")) continue; 
+          else if (line.empty()) continue; 
+          else {
           n.id = strings::get_rand();
         }
 
